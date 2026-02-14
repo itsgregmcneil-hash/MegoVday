@@ -28,6 +28,32 @@
             position: relative;
         }
 
+        /* Password Screen */
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #8B0000 0%, #DC143C 50%, #FF6B6B 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .password-screen.hidden {
+            display: none;
+        }
+
+        .password-content {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
         /* Floating hearts and dog photos background */
         .floating-items {
             position: fixed;
@@ -384,7 +410,7 @@
 
         .btn-no {
             background: linear-gradient(135deg, #f44336, #e57373);
-            transition: all 0.3s ease;
+            transition: all 0.15s ease;
             z-index: 99;
         }
 
@@ -933,6 +959,27 @@
     </style>
 </head>
 <body>
+    <!-- Password Screen -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-content">
+            <h1>🔒</h1>
+            <h2 style="color: var(--primary); margin-bottom: 20px;">Enter Password</h2>
+            <input type="password" id="passwordInput" placeholder="Password" style="
+                padding: 15px 20px;
+                font-size: 1.2em;
+                border: 3px solid var(--primary);
+                border-radius: 10px;
+                text-align: center;
+                margin-bottom: 20px;
+                width: 250px;
+                font-family: 'Quicksand', sans-serif;
+            ">
+            <br>
+            <button class="btn" onclick="checkPassword()">Enter</button>
+            <p id="passwordError" style="color: #f44336; margin-top: 15px; display: none;">Incorrect password!</p>
+        </div>
+    </div>
+
     <!-- Floating Hearts and Dog Photos Background -->
     <div class="floating-items" id="floatingItems"></div>
 
@@ -1136,7 +1183,6 @@
                 <div class="game-container">
                     <div class="memory-grid" id="memoryGame2025"></div>
                     <div id="memory2025-complete" style="display: none;">
-                        <div class="game-complete">Perfect!</div>
                         <button class="btn" onclick="nextScreen(7)" style="margin-top: 20px;">Next Year ➜</button>
                     </div>
                 </div>
@@ -1156,7 +1202,7 @@
                 <h2 style="margin-top: 40px;">Will you be my Valentine?</h2>
                 <div class="buttons-container-horizontal">
                     <button class="btn btn-yes" onclick="celebrate()">YES!</button>
-                    <button class="btn btn-no" id="noBtn" onmouseover="moveButtonUpDown()" onclick="moveButtonUpDown()">No</button>
+                    <button class="btn btn-no" id="noBtn" onmouseenter="moveButtonUpDown()" onclick="moveButtonUpDown()">No</button>
                 </div>
             </div>
         </div>
@@ -1170,18 +1216,45 @@
                 <h2>Golden Ticket</h2>
                 <div class="ticket-text">Admit Two</div>
                 <p style="font-size: 1.4em; font-weight: 700; margin: 20px 0; color: #8B4513;">
-                    Mego Wallo
+                    Mego Wallo & Guest
                 </p>
                 <div class="ticket-details">California Great Adventure</div>
                 <p style="font-size: 1.2em; margin-top: 15px;">
-                    Saturday June 20th 2026<br>
-                    at 9 AM
+                    Saturday June 20th 2026
                 </p>
             </div>
         </div>
     </div>
 
     <script>
+        // Password check
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const error = document.getElementById('passwordError');
+            const passwordScreen = document.getElementById('passwordScreen');
+            
+            if (input.value === 'Orby') {
+                passwordScreen.classList.add('hidden');
+            } else {
+                error.style.display = 'block';
+                input.value = '';
+                input.focus();
+            }
+        }
+        
+        // Allow Enter key to submit password
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('passwordInput');
+            if (input) {
+                input.focus();
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+            }
+        });
+
         // Image data for the dogs
         const dogImages = {
             arya: 'AryaNB.png',
@@ -1951,7 +2024,7 @@
             observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
         });
 
-        // Moving NO button (up and down while staying horizontal)
+        // Moving NO button (up and down while staying horizontal) - AGGRESSIVE
         function moveButtonUpDown() {
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.querySelector('.btn-yes');
@@ -1969,8 +2042,8 @@
             
             // Keep trying until we find a vertical position that doesn't overlap with Yes button
             do {
-                // Random vertical offset
-                newTop = (Math.random() - 0.5) * 100; // -50px to +50px
+                // AGGRESSIVE: Larger random vertical offset (-80px to +80px)
+                newTop = (Math.random() - 0.5) * 160;
                 
                 // Calculate absolute positions for overlap check
                 const potentialTop = containerRect.top + containerRect.height/2 + newTop;
@@ -1979,8 +2052,8 @@
                 const yesTop = yesBtnRect.top;
                 const yesBottom = yesBtnRect.bottom;
                 
-                // Check if it overlaps vertically (with 20px buffer)
-                const noOverlap = potentialBottom < yesTop - 20 || potentialTop > yesBottom + 20;
+                // Check if it overlaps vertically (with 30px buffer for more aggressive dodging)
+                const noOverlap = potentialBottom < yesTop - 30 || potentialTop > yesBottom + 30;
                 
                 if (noOverlap) break;
                 attempts++;
@@ -1988,6 +2061,7 @@
             
             noBtn.style.position = 'relative';
             noBtn.style.top = newTop + 'px';
+            noBtn.style.transition = 'top 0.15s ease';
         }
 
         // Celebration
