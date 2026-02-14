@@ -399,6 +399,10 @@
             position: relative;
         }
 
+        .buttons-container-horizontal .btn-no {
+            position: static;
+        }
+
         .btn-yes {
             background: linear-gradient(135deg, #4CAF50, #66BB6A);
             z-index: 100;
@@ -644,6 +648,25 @@
         .cleanup-complete-btn.show {
             display: block;
             animation: popIn 0.5s ease;
+        }
+
+        /* Cleanup Hint */
+        .cleanup-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 1000;
+        }
+
+        .cleanup-hint.show {
+            opacity: 1;
         }
 
         /* Lasik Game 2021 */
@@ -964,7 +987,7 @@
         <div class="password-content">
             <h1>🔒</h1>
             <h2 style="color: var(--primary); margin-bottom: 20px;">Enter Password</h2>
-            <input type="password" id="passwordInput" placeholder="Password" style="
+            <input type="password" id="passwordInput" placeholder="" style="
                 padding: 15px 20px;
                 font-size: 1.2em;
                 border: 3px solid var(--primary);
@@ -1018,6 +1041,7 @@
                     <button class="btn cleanup-complete-btn" id="cleanup2020-btn" onclick="nextScreen(2)">
                         Next Year ➜
                     </button>
+                    <div class="cleanup-hint" id="cleanupHint2020">Try cleaning your clothes</div>
                 </div>
             </div>
         </div>
@@ -1507,6 +1531,14 @@
             const trashBin = document.getElementById('trashBin2020');
             const storyText = document.getElementById('story2020');
             const completeBtn = document.getElementById('cleanup2020-btn');
+            const cleanupHint = document.getElementById('cleanupHint2020');
+            
+            // Show hint after 20 seconds
+            setTimeout(() => {
+                if (!completeBtn.classList.contains('show')) {
+                    cleanupHint.classList.add('show');
+                }
+            }, 20000);
             
             // Junk emojis to scatter - only 6 items
             const junkItems = ['👕', '👖', '📄', '📚', '🧦', '👟'];
@@ -1690,18 +1722,25 @@
             const completeBtn = document.getElementById('suv2022-complete');
             
             const containerRect = gameContainer.getBoundingClientRect();
-            let suvX = 50;
-            let suvY = 180;
-            let targetX = Math.random() * (containerRect.width - 120);
-            let targetY = Math.random() * (containerRect.height - 100);
+            
+            // Start SUV in bottom-left corner
+            let suvX = 20;
+            let suvY = containerRect.height - 100;
+            
+            // Start DB in top-right corner (opposite)
+            let targetX = containerRect.width - 120;
+            let targetY = 20;
+            
             let targetVelX = 2;
             let targetVelY = 2;
             const speed = 20;
+            const immuneSpeed = 4; // Faster when immune
             let catches = 0;
             let currentBlock = null;
-            let gameStartTime = Date.now();
             let gameInterval = null;
             let isGameActive = true;
+            let isImmune = false;
+            let immuneTimeout = null;
             
             suv.style.left = suvX + 'px';
             suv.style.top = suvY + 'px';
@@ -1724,9 +1763,17 @@
                     currentBlock.element.remove();
                 }
                 
+                const rect = gameContainer.getBoundingClientRect();
+                
                 // Place objection block at DB's current location
                 let blockX = targetX;
                 let blockY = targetY;
+                
+                // Ensure block stays within bounds (100px width for "Objection!")
+                const blockWidth = 100;
+                const blockHeight = 50;
+                blockX = Math.max(10, Math.min(blockX, rect.width - blockWidth - 10));
+                blockY = Math.max(10, Math.min(blockY, rect.height - blockHeight - 10));
                 
                 // Make sure block doesn't spawn on top of SUV
                 const suvRect = {
@@ -1738,9 +1785,9 @@
                 
                 const potentialBlockRect = {
                     left: blockX,
-                    right: blockX + 100,
+                    right: blockX + blockWidth,
                     top: blockY,
-                    bottom: blockY + 50
+                    bottom: blockY + blockHeight
                 };
                 
                 // If block would overlap SUV, offset it
@@ -1749,8 +1796,8 @@
                       suvRect.bottom < potentialBlockRect.top || 
                       suvRect.top > potentialBlockRect.bottom)) {
                     // Move block away from SUV
-                    blockX = targetX + 150;
-                    blockY = targetY + 150;
+                    blockX = Math.min(blockX + 150, rect.width - blockWidth - 10);
+                    blockY = Math.min(blockY + 150, rect.height - blockHeight - 10);
                 }
                 
                 const block = document.createElement('div');
@@ -1764,48 +1811,66 @@
                     element: block,
                     x: blockX,
                     y: blockY,
-                    width: 100,
-                    height: 50
+                    width: blockWidth,
+                    height: blockHeight
                 };
+            }
+            
+            function activateImmunity() {
+                isImmune = true;
+                target.style.opacity = '0.7';
+                
+                // Clear any existing immunity timeout
+                if (immuneTimeout) clearTimeout(immuneTimeout);
+                
+                // 2 seconds of immunity
+                immuneTimeout = setTimeout(() => {
+                    isImmune = false;
+                    target.style.opacity = '1';
+                }, 2000);
             }
             
             function moveTarget() {
                 if (!isGameActive) return;
                 
                 const rect = gameContainer.getBoundingClientRect();
+                const currentSpeed = isImmune ? immuneSpeed : targetVelX;
+                const currentSpeedY = isImmune ? immuneSpeed * (targetVelY / Math.abs(targetVelY)) : targetVelY;
                 
                 // Proposed new position
-                let newTargetX = targetX + targetVelX;
-                let newTargetY = targetY + targetVelY;
+                let newTargetX = targetX + (currentSpeed * Math.sign(targetVelX));
+                let newTargetY = targetY + currentSpeedY;
                 
-                // Check collision with SUV
-                const suvRect = {
-                    left: suvX,
-                    right: suvX + 80,
-                    top: suvY,
-                    bottom: suvY + 80
-                };
-                
-                const targetRect = {
-                    left: newTargetX,
-                    right: newTargetX + 80,
-                    top: newTargetY,
-                    bottom: newTargetY + 80
-                };
-                
-                // If DB would hit SUV, bounce away
-                if (!(suvRect.right < targetRect.left || 
-                      suvRect.left > targetRect.right || 
-                      suvRect.bottom < targetRect.top || 
-                      suvRect.top > targetRect.bottom)) {
-                    targetVelX *= -1;
-                    targetVelY *= -1;
-                    newTargetX = targetX + targetVelX;
-                    newTargetY = targetY + targetVelY;
+                // Check collision with SUV (only if not immune)
+                if (!isImmune) {
+                    const suvRect = {
+                        left: suvX,
+                        right: suvX + 80,
+                        top: suvY,
+                        bottom: suvY + 80
+                    };
+                    
+                    const targetRect = {
+                        left: newTargetX,
+                        right: newTargetX + 80,
+                        top: newTargetY,
+                        bottom: newTargetY + 80
+                    };
+                    
+                    // If DB would hit SUV, bounce away
+                    if (!(suvRect.right < targetRect.left || 
+                          suvRect.left > targetRect.right || 
+                          suvRect.bottom < targetRect.top || 
+                          suvRect.top > targetRect.bottom)) {
+                        targetVelX *= -1;
+                        targetVelY *= -1;
+                        newTargetX = targetX + targetVelX;
+                        newTargetY = targetY + targetVelY;
+                    }
                 }
                 
-                // Check collision with objection block
-                if (currentBlock) {
+                // Check collision with objection block (only if not immune)
+                if (currentBlock && !isImmune) {
                     const blockRect = {
                         left: currentBlock.x,
                         right: currentBlock.x + currentBlock.width,
@@ -1850,7 +1915,7 @@
             }
             
             function checkCollision() {
-                if (!isGameActive) return;
+                if (!isGameActive || isImmune) return;
                 
                 const suvRect = {
                     left: suvX,
@@ -1872,6 +1937,7 @@
                       suvRect.top > targetRect.bottom)) {
                     catches++;
                     createObjectionBlock();
+                    activateImmunity(); // DB gets immunity after being caught
                     
                     // Increase speed slightly
                     targetVelX *= 1.2;
@@ -2024,44 +2090,55 @@
             observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
         });
 
-        // Moving NO button (up and down while staying horizontal) - AGGRESSIVE
+        // Moving NO button (2D movement across entire white window) - AGGRESSIVE
         function moveButtonUpDown() {
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.querySelector('.btn-yes');
-            const container = document.querySelector('.buttons-container-horizontal');
+            const content = document.querySelector('.content');
             
-            if (!container || !yesBtn) return;
+            if (!content || !yesBtn) return;
             
-            const containerRect = container.getBoundingClientRect();
+            const contentRect = content.getBoundingClientRect();
             const yesBtnRect = yesBtn.getBoundingClientRect();
+            const noBtnWidth = noBtn.offsetWidth;
             const noBtnHeight = noBtn.offsetHeight;
             
             let attempts = 0;
-            const maxAttempts = 10;
-            let newTop;
+            const maxAttempts = 20;
+            let newLeft, newTop;
             
-            // Keep trying until we find a vertical position that doesn't overlap with Yes button
+            // Keep trying until we find a position that doesn't overlap with Yes button
             do {
-                // AGGRESSIVE: Larger random vertical offset (-80px to +80px)
-                newTop = (Math.random() - 0.5) * 160;
+                // Random position anywhere in the white content box
+                newLeft = Math.random() * (contentRect.width - noBtnWidth - 80) + 40;
+                newTop = Math.random() * (contentRect.height - noBtnHeight - 80) + 40;
                 
                 // Calculate absolute positions for overlap check
-                const potentialTop = containerRect.top + containerRect.height/2 + newTop;
+                const potentialLeft = contentRect.left + newLeft;
+                const potentialRight = potentialLeft + noBtnWidth;
+                const potentialTop = contentRect.top + newTop;
                 const potentialBottom = potentialTop + noBtnHeight;
                 
+                const yesLeft = yesBtnRect.left;
+                const yesRight = yesBtnRect.right;
                 const yesTop = yesBtnRect.top;
                 const yesBottom = yesBtnRect.bottom;
                 
-                // Check if it overlaps vertically (with 30px buffer for more aggressive dodging)
-                const noOverlap = potentialBottom < yesTop - 30 || potentialTop > yesBottom + 30;
+                // Check if it overlaps with Yes button (with 30px buffer)
+                const noOverlap = potentialRight < yesLeft - 30 || 
+                                 potentialLeft > yesRight + 30 ||
+                                 potentialBottom < yesTop - 30 ||
+                                 potentialTop > yesBottom + 30;
                 
                 if (noOverlap) break;
                 attempts++;
             } while (attempts < maxAttempts);
             
-            noBtn.style.position = 'relative';
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = newLeft + 'px';
             noBtn.style.top = newTop + 'px';
-            noBtn.style.transition = 'top 0.15s ease';
+            noBtn.style.transform = 'none';
+            noBtn.style.transition = 'all 0.15s ease';
         }
 
         // Celebration
