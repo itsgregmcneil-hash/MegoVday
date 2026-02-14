@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine? 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #DC143C;
+            --secondary: #FF6B6B;
+            --accent: #FFD700;
+            --dark: #8B0000;
+            --light: #FFF0F0;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #8B0000 0%, #DC143C 50%, #FF6B6B 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts and dog photos background */
+        .floating-items {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .floating-item {
+            position: absolute;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .heart {
+            font-size: 20px;
+            opacity: 0.3;
+        }
+
+        .dog-float {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            opacity: 0.4;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.4;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .screen.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .screen.hidden {
+            display: none;
+        }
+
+        .content {
+            text-align: center;
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: var(--primary);
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: bounce 2s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h2 {
+            font-family: 'Pacifico', cursive;
+            color: var(--primary);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        p {
+            font-size: 1.3em;
+            color: var(--dark);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            font-size: 1.3em;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            box-shadow: 0 8px 20px rgba(220, 20, 60, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(220, 20, 60, 0.6);
+        }
+
+        /* Year Cards */
+        .year-card {
+            background: linear-gradient(135deg, #FFF0F0, white);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .year-title {
+            font-size: 2em;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .year-description {
+            font-size: 1.1em;
+            color: var(--dark);
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        /* Mini Games */
+        .game-container {
+            margin: 20px 0;
+        }
+
+        /* Trivia Game */
+        .trivia-options {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .trivia-option {
+            background: white;
+            border: 3px solid var(--secondary);
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .trivia-option:hover {
+            background: var(--secondary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .trivia-option.correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .trivia-option.wrong {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+
+        /* Memory Match Game */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .memory-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .memory-card.flipped {
+            background: white;
+            border: 3px solid var(--primary);
+        }
+
+        .memory-card.flipped img {
+            display: block;
+        }
+
+        .memory-card.flipped .card-back {
+            display: none;
+        }
+
+        .memory-card:hover {
+            transform: scale(1.1);
+        }
+
+        .memory-card.matched {
+            background: #4CAF50;
+            cursor: default;
+        }
+
+        /* Puzzle Game */
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .puzzle-piece {
+            aspect-ratio: 1;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .puzzle-piece:hover {
+            background: var(--secondary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .puzzle-piece.empty {
+            background: transparent;
+            border: 2px dashed var(--secondary);
+            cursor: default;
+        }
+
+        /* Timeline */
+        .timeline-item {
+            background: white;
+            padding: 20px;
+            border-left: 5px solid var(--primary);
+            margin-bottom: 20px;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .timeline-date {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Final Question Screen */
+        .question-container {
+            position: relative;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            height: 80px;
+            position: relative;
+        }
+
+        .buttons-container-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            margin-top: 40px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .buttons-container-horizontal {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+            min-height: 150px;
+            position: relative;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            z-index: 100;
+        }
+
+        .btn-yes:hover {
+            background: linear-gradient(135deg, #45a049, #5cb85c);
+        }
+
+        .btn-no {
+            background: linear-gradient(135deg, #f44336, #e57373);
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        /* Celebration */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .celebration.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .celebration-content {
+            text-align: center;
+            color: white;
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .celebration h1 {
+            font-size: 5em;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        /* Golden Ticket */
+        .golden-ticket {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #8B4513;
+            padding: 40px;
+            border-radius: 20px;
+            margin-top: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: slideUp 0.8s ease 0.3s backwards;
+            border: 5px solid #DAA520;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .golden-ticket::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .golden-ticket h2 {
+            color: #8B4513;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.5);
+        }
+
+        .ticket-details {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .ticket-text {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.8em;
+            margin: 15px 0;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            position: absolute;
+            animation: confettiFall 3s linear infinite;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .game-complete {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: 700;
+            animation: popIn 0.5s ease;
+        }
+
+        /* Trash Cleanup Game */
+        .cleanup-container {
+            position: relative;
+            min-height: 400px;
+            background: linear-gradient(135deg, #FFF5F5, white);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .story-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: var(--dark);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+        }
+
+        .story-blur {
+            filter: blur(8px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .junk-item {
+            position: absolute;
+            font-size: 6em;
+            cursor: grab;
+            z-index: 10;
+            transition: transform 0.1s ease;
+            user-select: none;
+        }
+
+        .junk-item:active {
+            cursor: grabbing;
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .junk-item.in-trash {
+            opacity: 0;
+            transform: scale(0) rotate(180deg);
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .trash-bin {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 120px;
+            height: 140px;
+            background: linear-gradient(135deg, #666, #999);
+            border-radius: 10px 10px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            border: 4px solid #333;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .trash-bin::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            width: 110%;
+            height: 15px;
+            background: #555;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .trash-bin.drag-over {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            transform: scale(1.1);
+            transition: all 0.2s ease;
+        }
+
+        .cleanup-complete-btn {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .cleanup-complete-btn.show {
+            display: block;
+            animation: popIn 0.5s ease;
+        }
+
+        /* Lasik Game 2021 */
+        .lasik-container {
+            position: relative;
+            padding: 30px;
+            background: linear-gradient(135deg, #FFF5F5, white);
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .lasik-text {
+            font-size: 1.1em;
+            line-height: 2;
+            color: var(--dark);
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .lasik-text p {
+            margin-bottom: 15px;
+            filter: blur(10px);
+            transition: filter 0.5s ease;
+        }
+
+        .lasik-text p.revealed {
+            filter: blur(0);
+        }
+
+        .lasik-text .small-text {
+            font-size: 0.7em;
+            color: #666;
+        }
+
+        .lasik-text .growing-text {
+            display: inline-block;
+        }
+
+        .lasik-text .grow-1 { font-size: 1em; }
+        .lasik-text .grow-2 { font-size: 1.2em; }
+        .lasik-text .grow-3 { font-size: 1.4em; font-weight: 700; color: var(--primary); }
+
+        .lasik-button {
+            background: linear-gradient(135deg, #DC143C, #8B0000);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5em;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            box-shadow: 0 8px 20px rgba(220, 20, 60, 0.4);
+            margin: 30px auto;
+            display: block;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .lasik-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 10px rgba(220, 20, 60, 0.6);
+            animation: vibrate 0.1s infinite;
+        }
+
+        @keyframes vibrate {
+            0%, 100% { transform: scale(0.95) translateX(0); }
+            25% { transform: scale(0.95) translateX(-2px); }
+            50% { transform: scale(0.95) translateX(2px); }
+            75% { transform: scale(0.95) translateX(-2px); }
+        }
+
+        .lasik-button.complete {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            cursor: default;
+        }
+
+        .quote-text {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.4em;
+            color: var(--primary);
+            text-align: center;
+            margin: 20px 0;
+            font-style: italic;
+            filter: blur(10px);
+            transition: filter 0.5s ease;
+        }
+
+        .quote-text.revealed {
+            filter: blur(0);
+        }
+
+        /* Red SUV Game 2022 */
+        .suv-game-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(180deg, #87CEEB 0%, #98D8C8 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 4px solid var(--dark);
+            margin: 20px 0;
+        }
+
+        .suv {
+            position: absolute;
+            font-size: 4em;
+            z-index: 10;
+            transition: all 0.1s ease;
+        }
+
+        .objection-target {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            z-index: 9;
+        }
+
+        .objection-target img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .objection-block {
+            position: absolute;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: 3px solid #DAA520;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.2em;
+            color: #8B4513;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 8;
+            pointer-events: all;
+        }
+
+        .game-instructions {
+            text-align: center;
+            font-weight: 700;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Envelope Game 2024 */
+        .envelope-container {
+            perspective: 1000px;
+            margin: 40px auto;
+            width: 300px;
+            height: 200px;
+            position: relative;
+        }
+
+        .envelope {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: transform 0.6s ease;
+        }
+
+        .envelope:hover {
+            transform: translateY(-10px);
+        }
+
+        .envelope-back {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #FFE6E6, #FFD6D6);
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            position: absolute;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(135deg, #FFD6D6, #FFC6C6);
+            border: 3px solid var(--primary);
+            border-radius: 10px 10px 0 0;
+            transform-origin: top;
+            transition: transform 0.8s ease;
+            z-index: 10;
+        }
+
+        .envelope-stamp {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #DC143C, #8B0000);
+            border: 3px solid white;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transform: rotate(15deg);
+        }
+
+        .envelope.opened .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .letter {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 75%;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(0);
+            transition: all 0.6s ease 0.4s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .envelope.opened .letter {
+            opacity: 1;
+            transform: translateY(-20px);
+        }
+
+        .letter-content {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .shake {
+            animation: shake 0.5s ease infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px) translateY(2px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px) translateY(-2px); }
+        }
+
+        .envelope-hint {
+            text-align: center;
+            font-size: 1.1em;
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Receipt for 2023 */
+        .receipt-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .receipt {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #ddd;
+        }
+
+        .receipt-header {
+            text-align: center;
+        }
+
+        .receipt-items {
+            margin: 20px 0;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 1em;
+        }
+
+        .receipt-footer {
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            h2 { font-size: 2em; }
+            .content { padding: 30px 20px; }
+            .btn { padding: 15px 35px; font-size: 1.1em; }
+            .celebration h1 { font-size: 3em; }
+            .memory-grid { grid-template-columns: repeat(3, 1fr); }
+            .golden-ticket { padding: 25px; }
+            .golden-ticket h2 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Hearts and Dog Photos Background -->
+    <div class="floating-items" id="floatingItems"></div>
+
+    <!-- Screen 1: Welcome -->
+    <div class="screen active" id="screen1">
+        <div class="content">
+            <h1>hello MEGO 💕</h1>
+            <p>happy valentines day hehe</p>
+            <p>I have surprise!</p>
+            <button class="btn" onclick="nextScreen(1)">Lub Dub?! ✨</button>
+        </div>
+    </div>
+
+    <!-- Screen 2: 2020 - Before I was old as dirt -->
+    <div class="screen hidden" id="screen2">
+        <div class="content">
+            <div class="year-card">
+                <div class="year-title">In 2020</div>
+                <div class="year-description">I wasn't as old as dirt and you had your own apartment</div>
+                
+                <div class="game-container">
+                    <div class="cleanup-container" id="cleanup2020">
+                        <div class="story-text" id="story2020">
+                            <p style="font-weight: 700; font-size: 1.3em; color: var(--primary);">
+                                There was stuff EVERYWHERE. Helping you clean validated my purpose 😊
+                            </p>
+                        </div>
+                        
+                        <div class="trash-bin" id="trashBin2020">
+                            🗑️
+                        </div>
+                        
+                        <!-- Draggable junk items will be added by JavaScript -->
+                    </div>
+                    
+                    <button class="btn cleanup-complete-btn" id="cleanup2020-btn" onclick="nextScreen(2)">
+                        Next Year ➜
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 3: 2021 -->
+    <div class="screen hidden" id="screen3">
+        <div class="content">
+            <div class="year-card">
+                <div class="year-title">In 2021</div>
+                
+                <div class="game-container">
+                    <div class="lasik-container">
+                        <div class="lasik-text" id="lasikText2021">
+                            <p data-line="0">You were a ball of stress with work, school, and not sleeping</p>
+                            
+                            <p data-line="1">BUT you "gradually" moved in and came to live with me. I liked that part a lot.</p>
+                            
+                            <p data-line="2" class="small-text">
+                                You also got super high off pain killers, tried to pet Anthony's dog, fed some animals, Arya pooped in our apartment, 
+                            </p>
+                            
+                            <p data-line="3">
+                                <span class="growing-text grow-1">but, </span>
+                                <span class="growing-text grow-2">overall </span>
+                                <span class="growing-text grow-3">great year!</span>
+                            </p>
+                        </div>
+                        
+                        <div class="quote-text" id="quoteText2021">"I can see, I can FIGHT" - Mego Probably</div>
+                        
+                        <button class="lasik-button" id="lasikBtn2021">
+                            LASIK
+                        </button>
+                    </div>
+                    
+                    <button class="btn cleanup-complete-btn" id="lasik2021-complete" onclick="nextScreen(3)">
+                        Next Year ➜
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 4: 2022 -->
+    <div class="screen hidden" id="screen4">
+        <div class="content">
+            <div class="year-card">
+                <div class="year-title">In 2022</div>
+                <div class="year-description">This was the strangest thing we've ever been obsessed with</div>
+                
+                <div class="game-container">
+                    <div class="game-instructions">
+                        Use arrow keys to drive the Red SUV and catch DB!
+                    </div>
+                    <div class="suv-game-container" id="suvGame">
+                        <div class="suv" id="redSuv">🚗</div>
+                        <div class="objection-target" id="objectionTarget">
+                            <img src="DB.png" alt="DB">
+                        </div>
+                    </div>
+                    <button class="btn cleanup-complete-btn" id="suv2022-complete" onclick="nextScreen(4)">
+                        Next Year ➜
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 5: 2023 -->
+    <div class="screen hidden" id="screen5">
+        <div class="content">
+            <div class="year-card">
+                <div class="year-title">In 2023</div>
+                
+                <div class="game-container">
+                    <div class="receipt-container">
+                        <div class="receipt">
+                            <div class="receipt-header">
+                                <h3 style="font-family: 'Pacifico', cursive; font-size: 2em; margin: 0; color: var(--primary);">La Quinta</h3>
+                                <p style="margin: 5px 0; font-size: 0.8em;">Thank you for your visit!</p>
+                                <div style="border-bottom: 2px dashed #333; margin: 15px 0;"></div>
+                            </div>
+                            
+                            <div class="receipt-items">
+                                <div class="receipt-item">
+                                    <span style="max-width: 70%; word-wrap: break-word;">Go to Mexico</span>
+                                    <span style="min-width: 30px; text-align: right;">✓</span>
+                                </div>
+                                <div class="receipt-item">
+                                    <span style="max-width: 70%; word-wrap: break-word;">Get a Tattoo</span>
+                                    <span style="min-width: 30px; text-align: right;">✓</span>
+                                </div>
+                                <div class="receipt-item">
+                                    <span style="max-width: 70%; word-wrap: break-word;">Had a lot of beach time</span>
+                                    <span style="min-width: 30px; text-align: right;">✓</span>
+                                </div>
+                                <div class="receipt-item">
+                                    <span style="max-width: 70%; word-wrap: break-word;">Training with dumb slut</span>
+                                    <span style="min-width: 30px; text-align: right;">✓</span>
+                                </div>
+                            </div>
+                            
+                            <div style="border-bottom: 2px dashed #333; margin: 15px 0;"></div>
+                            
+                            <div class="receipt-footer">
+                                <div class="receipt-item" style="font-weight: 700; font-size: 1.1em;">
+                                    <span>Tip:</span>
+                                    <span>Very</span>
+                                </div>
+                                <div class="receipt-item" style="font-weight: 700; font-size: 1.2em; color: var(--primary);">
+                                    <span>TOTAL:</span>
+                                    <span>Cash Money</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="nextScreen(5)" style="margin-top: 30px;">Next Year ➜</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 6: 2024 -->
+    <div class="screen hidden" id="screen6">
+        <div class="content">
+            <div class="year-card">
+                <div class="year-title" id="yearTitle2024">In 2024</div>
+                
+                <div class="game-container">
+                    <div class="envelope-hint" id="envelopeHint2024">You got mail! Click to open it...</div>
+                    <div class="envelope-container">
+                        <div class="envelope" id="envelope2024" onclick="openEnvelope()">
+                            <div class="envelope-back"></div>
+                            <div class="envelope-flap">
+                                <div class="envelope-stamp">💕</div>
+                            </div>
+                            <div class="letter">
+                                <div class="letter-content">
+                                    🎉<br>
+                                    YOU GOT INTO<br>
+                                    VET SCHOOL!<br>
+                                    🎉
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn cleanup-complete-btn" id="envelope2024-complete" onclick="nextScreen(6)">
+                        Next Year ➜
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 7: 2025 -->
+    <div class="screen hidden" id="screen7">
+        <div class="content">
+            <div class="year-card">
+                <div class="year-title">In 2025</div>
+                <div class="year-description">I became the undefeated heavyweight champ in surprising you at the Eggo Hawaii classic</div>
+                
+                <div class="game-container">
+                    <div class="memory-grid" id="memoryGame2025"></div>
+                    <div id="memory2025-complete" style="display: none;">
+                        <div class="game-complete">Perfect!</div>
+                        <button class="btn" onclick="nextScreen(7)" style="margin-top: 20px;">Next Year ➜</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 8: 2026 - Present & Valentine Question -->
+    <div class="screen hidden" id="screen8">
+        <div class="content">
+            <div class="year-card">
+                <div class="year-title">In 2026</div>
+                <div class="year-description" style="font-size: 1.3em; color: var(--primary); font-weight: 700;">
+                    Hey we're in the present, WOOOO!
+                </div>
+                
+                <h2 style="margin-top: 40px;">Will you be my Valentine?</h2>
+                <div class="buttons-container-horizontal">
+                    <button class="btn btn-yes" onclick="celebrate()">YES!</button>
+                    <button class="btn btn-no" id="noBtn" onmouseover="moveButtonUpDown()" onclick="moveButtonUpDown()">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Celebration Screen -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <h1>LUB DUB</h1>
+            <div class="golden-ticket">
+                <h2>Golden Ticket</h2>
+                <div class="ticket-text">Admit Two</div>
+                <p style="font-size: 1.4em; font-weight: 700; margin: 20px 0; color: #8B4513;">
+                    Mego Wallo
+                </p>
+                <div class="ticket-details">California Great Adventure</div>
+                <p style="font-size: 1.2em; margin-top: 15px;">
+                    Saturday June 20th 2026<br>
+                    at 9 AM
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Image data for the dogs
+        const dogImages = {
+            arya: 'AryaNB.png',
+            obi: 'ObiNB.png'
+        };
+
+        // Create floating hearts and dog photos with no overlap
+        function createFloatingItems() {
+            const container = document.getElementById('floatingItems');
+            const heartSymbols = ['💕', '💖', '💗', '💝', '❤️'];
+            
+            // Create a grid to prevent overlap - divide screen into columns
+            const numColumns = 8;
+            const usedColumns = new Set();
+            
+            function getAvailableColumn() {
+                const available = [];
+                for (let i = 0; i < numColumns; i++) {
+                    if (!usedColumns.has(i)) available.push(i);
+                }
+                if (available.length === 0) {
+                    usedColumns.clear();
+                    for (let i = 0; i < numColumns; i++) available.push(i);
+                }
+                const col = available[Math.floor(Math.random() * available.length)];
+                usedColumns.add(col);
+                return col;
+            }
+            
+            // Create hearts
+            for (let i = 0; i < 10; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-item heart';
+                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                
+                const col = getAvailableColumn();
+                heart.style.left = (col * (100 / numColumns) + (100 / numColumns / 2)) + '%';
+                heart.style.animationDelay = Math.random() * 15 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                container.appendChild(heart);
+            }
+            
+            // Reset used columns for dog photos
+            usedColumns.clear();
+            
+            // Create floating dog photos
+            const dogs = [dogImages.arya, dogImages.obi];
+            for (let i = 0; i < 10; i++) {
+                const dogImg = document.createElement('img');
+                dogImg.className = 'floating-item dog-float';
+                dogImg.src = dogs[i % 2];
+                
+                const col = getAvailableColumn();
+                dogImg.style.left = (col * (100 / numColumns) + (100 / numColumns / 2)) + '%';
+                dogImg.style.animationDelay = Math.random() * 15 + 's';
+                dogImg.style.animationDuration = (12 + Math.random() * 6) + 's';
+                container.appendChild(dogImg);
+            }
+        }
+
+        createFloatingItems();
+
+        // Screen navigation
+        function nextScreen(current) {
+            const currentScreen = document.getElementById('screen' + current);
+            let nextScreenNum = current + 1;
+            
+            // Skip screen 9 since it's merged with screen 8
+            if (nextScreenNum === 9) return;
+            
+            const nextScreen = document.getElementById('screen' + nextScreenNum);
+            
+            if (!nextScreen) return;
+            
+            currentScreen.classList.remove('active');
+            setTimeout(() => {
+                currentScreen.classList.add('hidden');
+                nextScreen.classList.remove('hidden');
+                setTimeout(() => {
+                    nextScreen.classList.add('active');
+                }, 50);
+            }, 600);
+        }
+
+        // Trivia game
+        function checkAnswer(element, isCorrect) {
+            const options = element.parentElement.querySelectorAll('.trivia-option');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt === element) {
+                    opt.classList.add(isCorrect ? 'correct' : 'wrong');
+                }
+            });
+            
+            if (isCorrect) {
+                const yearId = element.closest('.screen').id.replace('screen', '');
+                let completeId;
+                if (yearId === '2') completeId = 'trivia2020-complete';
+                else if (yearId === '5') completeId = 'trivia2023-complete';
+                else if (yearId === '6') completeId = 'trivia2024-complete';
+                
+                setTimeout(() => {
+                    document.getElementById(completeId).style.display = 'block';
+                }, 500);
+            }
+        }
+
+        // Memory Match Game
+        function initMemoryGame(gridId, completeId) {
+            const isHawaii = gridId === 'memoryGame2025';
+            
+            let items;
+            if (isHawaii) {
+                // Use Hawaii images
+                items = ['Hawaii1.jpg', 'Hawaii2.jpg', 'Hawaii3.jpg', 'Hawaii4.jpg', 'Hawaii5.jpg', 'Hawaii6.jpg'];
+            } else {
+                // Use emojis for other games
+                items = ['🎭', '🌹', '🎵', '🍕', '🎨', '🌟'];
+            }
+            
+            const cards = [...items, ...items].sort(() => Math.random() - 0.5);
+            const grid = document.getElementById(gridId);
+            
+            let flipped = [];
+            let matched = 0;
+            
+            cards.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.item = item;
+                card.dataset.index = index;
+                
+                if (isHawaii) {
+                    // Create image element
+                    const img = document.createElement('img');
+                    img.src = item;
+                    img.alt = 'Hawaii memory';
+                    card.appendChild(img);
+                    
+                    const back = document.createElement('div');
+                    back.className = 'card-back';
+                    back.innerHTML = '❓';
+                    back.style.fontSize = '2em';
+                    card.appendChild(back);
+                } else {
+                    card.innerHTML = '❓';
+                }
+                
+                card.onclick = function() {
+                    if (flipped.length < 2 && !this.classList.contains('flipped') && !this.classList.contains('matched')) {
+                        this.classList.add('flipped');
+                        if (!isHawaii) {
+                            this.innerHTML = item;
+                        }
+                        flipped.push(this);
+                        
+                        if (flipped.length === 2) {
+                            setTimeout(() => {
+                                if (flipped[0].dataset.item === flipped[1].dataset.item) {
+                                    flipped[0].classList.add('matched');
+                                    flipped[1].classList.add('matched');
+                                    matched += 2;
+                                    
+                                    if (matched === cards.length) {
+                                        setTimeout(() => {
+                                            document.getElementById(completeId).style.display = 'block';
+                                        }, 500);
+                                    }
+                                } else {
+                                    flipped[0].classList.remove('flipped');
+                                    flipped[1].classList.remove('flipped');
+                                    if (!isHawaii) {
+                                        flipped[0].innerHTML = '❓';
+                                        flipped[1].innerHTML = '❓';
+                                    }
+                                }
+                                flipped = [];
+                            }, 800);
+                        }
+                    }
+                };
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Sliding Puzzle Game
+        function initSlidingPuzzle() {
+            const words = ['LOVE', 'YOU', 'SO', 'MUCH', 'MEGO', '💕', '❤️', '✨', ''];
+            const grid = document.getElementById('puzzle2022');
+            let pieces = [...words];
+            let emptyIndex = 8;
+            
+            function shuffle() {
+                for (let i = 0; i < 50; i++) {
+                    const neighbors = getNeighbors(emptyIndex);
+                    const randomNeighbor = neighbors[Math.floor(Math.random() * neighbors.length)];
+                    [pieces[emptyIndex], pieces[randomNeighbor]] = [pieces[randomNeighbor], pieces[emptyIndex]];
+                    emptyIndex = randomNeighbor;
+                }
+            }
+            
+            function getNeighbors(index) {
+                const neighbors = [];
+                if (index % 3 !== 0) neighbors.push(index - 1);
+                if (index % 3 !== 2) neighbors.push(index + 1);
+                if (index >= 3) neighbors.push(index - 3);
+                if (index < 6) neighbors.push(index + 3);
+                return neighbors;
+            }
+            
+            function render() {
+                grid.innerHTML = '';
+                pieces.forEach((word, index) => {
+                    const piece = document.createElement('div');
+                    piece.className = word === '' ? 'puzzle-piece empty' : 'puzzle-piece';
+                    piece.textContent = word;
+                    
+                    if (word !== '') {
+                        piece.onclick = function() {
+                            const neighbors = getNeighbors(index);
+                            if (neighbors.includes(emptyIndex)) {
+                                [pieces[index], pieces[emptyIndex]] = [pieces[emptyIndex], pieces[index]];
+                                emptyIndex = index;
+                                render();
+                                checkWin();
+                            }
+                        };
+                    }
+                    
+                    grid.appendChild(piece);
+                });
+            }
+            
+            function checkWin() {
+                if (JSON.stringify(pieces) === JSON.stringify(words)) {
+                    setTimeout(() => {
+                        document.getElementById('puzzle2022-complete').style.display = 'block';
+                    }, 300);
+                }
+            }
+            
+            shuffle();
+            render();
+        }
+
+        // Trash Cleanup Game for 2020
+        function initCleanupGame() {
+            const container = document.getElementById('cleanup2020');
+            const trashBin = document.getElementById('trashBin2020');
+            const storyText = document.getElementById('story2020');
+            const completeBtn = document.getElementById('cleanup2020-btn');
+            
+            // Junk emojis to scatter - only 6 items
+            const junkItems = ['👕', '👖', '📄', '📚', '🧦', '👟'];
+            let itemsInTrash = 0;
+            const totalItems = junkItems.length;
+            
+            // Create and position junk items
+            junkItems.forEach((emoji, index) => {
+                const item = document.createElement('div');
+                item.className = 'junk-item';
+                item.textContent = emoji;
+                item.draggable = true;
+                item.id = 'junk-item-' + index;
+                
+                // Random position within container
+                const containerRect = container.getBoundingClientRect();
+                const randomX = Math.random() * (containerRect.width - 100);
+                const randomY = Math.random() * (containerRect.height - 100);
+                
+                item.style.left = randomX + 'px';
+                item.style.top = randomY + 'px';
+                
+                // Drag events
+                item.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', item.id);
+                    item.style.opacity = '0.7';
+                });
+                
+                item.addEventListener('dragend', (e) => {
+                    item.style.opacity = '1';
+                });
+                
+                // Touch events for mobile
+                let currentX, currentY, initialX, initialY;
+                
+                item.addEventListener('touchstart', (e) => {
+                    const touch = e.touches[0];
+                    initialX = touch.clientX - item.offsetLeft;
+                    initialY = touch.clientY - item.offsetTop;
+                });
+                
+                item.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    currentX = touch.clientX - initialX;
+                    currentY = touch.clientY - initialY;
+                    
+                    item.style.left = currentX + 'px';
+                    item.style.top = currentY + 'px';
+                });
+                
+                item.addEventListener('touchend', (e) => {
+                    const itemRect = item.getBoundingClientRect();
+                    const binRect = trashBin.getBoundingClientRect();
+                    
+                    if (isOverlapping(itemRect, binRect)) {
+                        removeItem(item);
+                    }
+                });
+                
+                container.appendChild(item);
+            });
+            
+            // Trash bin drag events
+            trashBin.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                trashBin.classList.add('drag-over');
+            });
+            
+            trashBin.addEventListener('dragleave', () => {
+                trashBin.classList.remove('drag-over');
+            });
+            
+            trashBin.addEventListener('drop', (e) => {
+                e.preventDefault();
+                trashBin.classList.remove('drag-over');
+                
+                // Get the dragged item ID from dataTransfer
+                const itemId = e.dataTransfer.getData('text/plain');
+                const draggedElement = document.getElementById(itemId);
+                
+                if (draggedElement && draggedElement.classList.contains('junk-item')) {
+                    removeItem(draggedElement);
+                }
+            });
+            
+            function removeItem(item) {
+                item.classList.add('in-trash');
+                itemsInTrash++;
+                
+                if (itemsInTrash === totalItems) {
+                    setTimeout(() => {
+                        storyText.classList.remove('story-blur');
+                        completeBtn.classList.add('show');
+                    }, 500);
+                }
+            }
+            
+            function isOverlapping(rect1, rect2) {
+                return !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+            }
+        }
+
+        // Lasik Game for 2021
+        function initLasikGame() {
+            const button = document.getElementById('lasikBtn2021');
+            const textContainer = document.getElementById('lasikText2021');
+            const lines = textContainer.querySelectorAll('p');
+            const quoteText = document.getElementById('quoteText2021');
+            const completeBtn = document.getElementById('lasik2021-complete');
+            
+            let currentLine = 0;
+            let isPressed = false;
+            let pressTimer = null;
+            
+            function revealNextLine() {
+                if (currentLine < lines.length) {
+                    lines[currentLine].classList.add('revealed');
+                    currentLine++;
+                    
+                    if (currentLine >= lines.length) {
+                        button.style.opacity = '0';
+                        button.style.transition = 'opacity 0.5s ease';
+                        button.style.pointerEvents = 'none';
+                        quoteText.classList.add('revealed');
+                        setTimeout(() => {
+                            completeBtn.classList.add('show');
+                        }, 500);
+                    }
+                }
+            }
+            
+            // Mouse events
+            button.addEventListener('mousedown', () => {
+                isPressed = true;
+                pressTimer = setInterval(() => {
+                    if (isPressed) {
+                        revealNextLine();
+                    }
+                }, 800);
+            });
+            
+            button.addEventListener('mouseup', () => {
+                isPressed = false;
+                clearInterval(pressTimer);
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                isPressed = false;
+                clearInterval(pressTimer);
+            });
+            
+            // Touch events for mobile
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                isPressed = true;
+                pressTimer = setInterval(() => {
+                    if (isPressed) {
+                        revealNextLine();
+                    }
+                }, 800);
+            });
+            
+            button.addEventListener('touchend', () => {
+                isPressed = false;
+                clearInterval(pressTimer);
+            });
+        }
+
+        // Red SUV Chase Game for 2022
+        function initSUVGame() {
+            const gameContainer = document.getElementById('suvGame');
+            const suv = document.getElementById('redSuv');
+            const target = document.getElementById('objectionTarget');
+            const targetImg = target.querySelector('img');
+            const completeBtn = document.getElementById('suv2022-complete');
+            
+            const containerRect = gameContainer.getBoundingClientRect();
+            let suvX = 50;
+            let suvY = 180;
+            let targetX = Math.random() * (containerRect.width - 120);
+            let targetY = Math.random() * (containerRect.height - 100);
+            let targetVelX = 2;
+            let targetVelY = 2;
+            const speed = 20;
+            let catches = 0;
+            let currentBlock = null;
+            let gameStartTime = Date.now();
+            let gameInterval = null;
+            let isGameActive = true;
+            
+            suv.style.left = suvX + 'px';
+            suv.style.top = suvY + 'px';
+            target.style.left = targetX + 'px';
+            target.style.top = targetY + 'px';
+            
+            // 30 second timeout
+            setTimeout(() => {
+                if (catches < 3 && isGameActive) {
+                    isGameActive = false;
+                    if (gameInterval) clearInterval(gameInterval);
+                    targetImg.src = 'DBSad.png';
+                    completeBtn.classList.add('show');
+                }
+            }, 30000);
+            
+            function createObjectionBlock() {
+                // Remove old block if it exists
+                if (currentBlock && currentBlock.element) {
+                    currentBlock.element.remove();
+                }
+                
+                // Place objection block at DB's current location
+                let blockX = targetX;
+                let blockY = targetY;
+                
+                // Make sure block doesn't spawn on top of SUV
+                const suvRect = {
+                    left: suvX,
+                    right: suvX + 80,
+                    top: suvY,
+                    bottom: suvY + 80
+                };
+                
+                const potentialBlockRect = {
+                    left: blockX,
+                    right: blockX + 100,
+                    top: blockY,
+                    bottom: blockY + 50
+                };
+                
+                // If block would overlap SUV, offset it
+                if (!(suvRect.right < potentialBlockRect.left || 
+                      suvRect.left > potentialBlockRect.right || 
+                      suvRect.bottom < potentialBlockRect.top || 
+                      suvRect.top > potentialBlockRect.bottom)) {
+                    // Move block away from SUV
+                    blockX = targetX + 150;
+                    blockY = targetY + 150;
+                }
+                
+                const block = document.createElement('div');
+                block.className = 'objection-block';
+                block.textContent = 'Objection!';
+                block.style.left = blockX + 'px';
+                block.style.top = blockY + 'px';
+                gameContainer.appendChild(block);
+                
+                currentBlock = {
+                    element: block,
+                    x: blockX,
+                    y: blockY,
+                    width: 100,
+                    height: 50
+                };
+            }
+            
+            function moveTarget() {
+                if (!isGameActive) return;
+                
+                const rect = gameContainer.getBoundingClientRect();
+                
+                // Proposed new position
+                let newTargetX = targetX + targetVelX;
+                let newTargetY = targetY + targetVelY;
+                
+                // Check collision with SUV
+                const suvRect = {
+                    left: suvX,
+                    right: suvX + 80,
+                    top: suvY,
+                    bottom: suvY + 80
+                };
+                
+                const targetRect = {
+                    left: newTargetX,
+                    right: newTargetX + 80,
+                    top: newTargetY,
+                    bottom: newTargetY + 80
+                };
+                
+                // If DB would hit SUV, bounce away
+                if (!(suvRect.right < targetRect.left || 
+                      suvRect.left > targetRect.right || 
+                      suvRect.bottom < targetRect.top || 
+                      suvRect.top > targetRect.bottom)) {
+                    targetVelX *= -1;
+                    targetVelY *= -1;
+                    newTargetX = targetX + targetVelX;
+                    newTargetY = targetY + targetVelY;
+                }
+                
+                // Check collision with objection block
+                if (currentBlock) {
+                    const blockRect = {
+                        left: currentBlock.x,
+                        right: currentBlock.x + currentBlock.width,
+                        top: currentBlock.y,
+                        bottom: currentBlock.y + currentBlock.height
+                    };
+                    
+                    const newTargetRect = {
+                        left: newTargetX,
+                        right: newTargetX + 80,
+                        top: newTargetY,
+                        bottom: newTargetY + 80
+                    };
+                    
+                    // If DB would hit block, bounce away
+                    if (!(blockRect.right < newTargetRect.left || 
+                          blockRect.left > newTargetRect.right || 
+                          blockRect.bottom < newTargetRect.top || 
+                          blockRect.top > newTargetRect.bottom)) {
+                        targetVelX *= -1;
+                        targetVelY *= -1;
+                        newTargetX = targetX + targetVelX;
+                        newTargetY = targetY + targetVelY;
+                    }
+                }
+                
+                targetX = newTargetX;
+                targetY = newTargetY;
+                
+                // Bounce off walls
+                if (targetX <= 0 || targetX >= rect.width - 80) {
+                    targetVelX *= -1;
+                    targetX = Math.max(0, Math.min(targetX, rect.width - 80));
+                }
+                if (targetY <= 0 || targetY >= rect.height - 80) {
+                    targetVelY *= -1;
+                    targetY = Math.max(0, Math.min(targetY, rect.height - 80));
+                }
+                
+                target.style.left = targetX + 'px';
+                target.style.top = targetY + 'px';
+            }
+            
+            function checkCollision() {
+                if (!isGameActive) return;
+                
+                const suvRect = {
+                    left: suvX,
+                    right: suvX + 80,
+                    top: suvY,
+                    bottom: suvY + 80
+                };
+                
+                const targetRect = {
+                    left: targetX,
+                    right: targetX + 80,
+                    top: targetY,
+                    bottom: targetY + 80
+                };
+                
+                if (!(suvRect.right < targetRect.left || 
+                      suvRect.left > targetRect.right || 
+                      suvRect.bottom < targetRect.top || 
+                      suvRect.top > targetRect.bottom)) {
+                    catches++;
+                    createObjectionBlock();
+                    
+                    // Increase speed slightly
+                    targetVelX *= 1.2;
+                    targetVelY *= 1.2;
+                    
+                    if (catches >= 3) {
+                        isGameActive = false;
+                        if (gameInterval) clearInterval(gameInterval);
+                        targetImg.src = 'DBSad.png';
+                        setTimeout(() => {
+                            completeBtn.classList.add('show');
+                        }, 500);
+                    }
+                }
+            }
+            
+            function checkBlockCollision(newX, newY) {
+                if (!currentBlock) return false;
+                
+                const suvRect = {
+                    left: newX,
+                    right: newX + 80,
+                    top: newY,
+                    bottom: newY + 80
+                };
+                
+                const blockRect = {
+                    left: currentBlock.x,
+                    right: currentBlock.x + currentBlock.width,
+                    top: currentBlock.y,
+                    bottom: currentBlock.y + currentBlock.height
+                };
+                
+                if (!(suvRect.right < blockRect.left || 
+                      suvRect.left > blockRect.right || 
+                      suvRect.bottom < blockRect.top || 
+                      suvRect.top > blockRect.bottom)) {
+                    return true;
+                }
+                return false;
+            }
+            
+            function isPositionStuck(x, y) {
+                // Check if SUV would be stuck (can't move in any direction)
+                const rect = gameContainer.getBoundingClientRect();
+                const up = y - speed;
+                const down = y + speed;
+                const left = x - speed;
+                const right = x + speed;
+                
+                const canMoveUp = up >= 0 && !checkBlockCollision(x, up);
+                const canMoveDown = down <= rect.height - 80 && !checkBlockCollision(x, down);
+                const canMoveLeft = left >= 0 && !checkBlockCollision(left, y);
+                const canMoveRight = right <= rect.width - 80 && !checkBlockCollision(right, y);
+                
+                return !(canMoveUp || canMoveDown || canMoveLeft || canMoveRight);
+            }
+            
+            // Game loop for moving target
+            gameInterval = setInterval(moveTarget, 30);
+            
+            document.addEventListener('keydown', (e) => {
+                if (!isGameActive) return;
+                
+                const rect = gameContainer.getBoundingClientRect();
+                let newX = suvX;
+                let newY = suvY;
+                
+                // Arrow keys only
+                if (e.key === 'ArrowUp') {
+                    newY = Math.max(0, suvY - speed);
+                } else if (e.key === 'ArrowDown') {
+                    newY = Math.min(rect.height - 80, suvY + speed);
+                } else if (e.key === 'ArrowLeft') {
+                    newX = Math.max(0, suvX - speed);
+                } else if (e.key === 'ArrowRight') {
+                    newX = Math.min(rect.width - 80, suvX + speed);
+                }
+                
+                // Check if new position collides with blocks
+                if (!checkBlockCollision(newX, newY)) {
+                    suvX = newX;
+                    suvY = newY;
+                    suv.style.left = suvX + 'px';
+                    suv.style.top = suvY + 'px';
+                    checkCollision();
+                } else if (isPositionStuck(suvX, suvY)) {
+                    // If stuck, remove the block to prevent softlock
+                    if (currentBlock && currentBlock.element) {
+                        currentBlock.element.remove();
+                        currentBlock = null;
+                    }
+                }
+            });
+        }
+
+        // Envelope Opening Game for 2024
+        function openEnvelope() {
+            const envelope = document.getElementById('envelope2024');
+            const envelopeHint = document.getElementById('envelopeHint2024');
+            const yearTitle = document.getElementById('yearTitle2024');
+            const completeBtn = document.getElementById('envelope2024-complete');
+            
+            if (!envelope.classList.contains('opened')) {
+                envelope.classList.add('opened');
+                envelopeHint.style.opacity = '0';
+                envelopeHint.style.transition = 'opacity 0.5s ease';
+                yearTitle.style.opacity = '0';
+                yearTitle.style.transition = 'opacity 0.5s ease';
+                
+                // Start shaking after envelope opens
+                setTimeout(() => {
+                    document.querySelector('.content').classList.add('shake');
+                    
+                    // Show button after shaking
+                    setTimeout(() => {
+                        document.querySelector('.content').classList.remove('shake');
+                        completeBtn.classList.add('show');
+                    }, 2000);
+                }, 1000);
+            }
+        }
+
+        // Initialize games when screens become active
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target.classList.contains('active')) {
+                    const screenId = mutation.target.id;
+                    
+                    if (screenId === 'screen2' && !document.getElementById('cleanup2020').dataset.initialized) {
+                        document.getElementById('cleanup2020').dataset.initialized = 'true';
+                        initCleanupGame();
+                    }
+                    if (screenId === 'screen3' && !document.getElementById('lasikBtn2021').dataset.initialized) {
+                        document.getElementById('lasikBtn2021').dataset.initialized = 'true';
+                        initLasikGame();
+                    }
+                    if (screenId === 'screen4' && !document.getElementById('suvGame').dataset.initialized) {
+                        document.getElementById('suvGame').dataset.initialized = 'true';
+                        initSUVGame();
+                    }
+                    if (screenId === 'screen7' && !document.getElementById('memoryGame2025').hasChildNodes()) {
+                        initMemoryGame('memoryGame2025', 'memory2025-complete');
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.screen').forEach(screen => {
+            observer.observe(screen, { attributes: true, attributeFilter: ['class'] });
+        });
+
+        // Moving NO button (up and down while staying horizontal)
+        function moveButtonUpDown() {
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.querySelector('.btn-yes');
+            const container = document.querySelector('.buttons-container-horizontal');
+            
+            if (!container || !yesBtn) return;
+            
+            const containerRect = container.getBoundingClientRect();
+            const yesBtnRect = yesBtn.getBoundingClientRect();
+            const noBtnHeight = noBtn.offsetHeight;
+            
+            let attempts = 0;
+            const maxAttempts = 10;
+            let newTop;
+            
+            // Keep trying until we find a vertical position that doesn't overlap with Yes button
+            do {
+                // Random vertical offset
+                newTop = (Math.random() - 0.5) * 100; // -50px to +50px
+                
+                // Calculate absolute positions for overlap check
+                const potentialTop = containerRect.top + containerRect.height/2 + newTop;
+                const potentialBottom = potentialTop + noBtnHeight;
+                
+                const yesTop = yesBtnRect.top;
+                const yesBottom = yesBtnRect.bottom;
+                
+                // Check if it overlaps vertically (with 20px buffer)
+                const noOverlap = potentialBottom < yesTop - 20 || potentialTop > yesBottom + 20;
+                
+                if (noOverlap) break;
+                attempts++;
+            } while (attempts < maxAttempts);
+            
+            noBtn.style.position = 'relative';
+            noBtn.style.top = newTop + 'px';
+        }
+
+        // Celebration
+        function celebrate() {
+            const celebration = document.getElementById('celebration');
+            celebration.classList.add('active');
+            
+            // Create confetti
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => createConfetti(), i * 20);
+            }
+        }
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = -10 + 'px';
+            confetti.style.background = ['#DC143C', '#FFD700', '#FF6B6B', '#FFA500'][Math.floor(Math.random() * 4)];
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            confetti.style.width = (Math.random() * 10 + 5) + 'px';
+            confetti.style.height = (Math.random() * 10 + 5) + 'px';
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => confetti.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
